@@ -1,166 +1,71 @@
-//Main.java
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+//dialogSubstitute.java
+public class ResizeDialogSubstitute {
+    // I cant code plz help me, slopy solution for returning from a dialog ):
+    int Width, Height;
+    void SetWidth(int width){Width=width;}
+    void SetHeight(int height){Height=height;}
+    boolean stillrunning = true;
+    ResizeDialogSubstitute(){
+        Width=0;
+        Height=0;
+    }
+}
 
-import javax.swing.BorderFactory;
-import javax.swing.JColorChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
- 
-public class Main extends JFrame implements ActionListener
+// test.java
+public class test {
+    String NewWidth,NewHeight; //Terrible way of returning from a function
+    public static void main(String[] args) {
+        ResizeDialogSubstitute uwudaddy = new ResizeDialogSubstitute();
+        ResizeDialog dialog = new ResizeDialog(100,100, uwudaddy);
+        dialog.setVisible(true);
+        while(uwudaddy.stillrunning);
+        System.out.println(uwudaddy.Height);
+        System.out.println(uwudaddy.Width);
+    }
+}
+
+// ResizeDialog.java
+public class ResizeDialog extends JDialog
 {
-    CompressedColor BaseColor;
-    JMenuBar bar;
-    JMenu file;
-    JMenu edit;
-    JMenuItem save;
-    JMenuItem exportdata;
-    JMenuItem exportfunction;
-    JMenuItem bgcolor;
-    ImagePane canvas;
-    ShadeSelectPane shadeselector;
-
-    Main(){
-        BaseColor = new CompressedColor(new Color(0,0,0));
-        BaseColor.updateShades();
-        this.setTitle("Image Editor");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(600,600);
-        this.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-         //natural height, maximum width
-         c.fill = GridBagConstraints.BOTH;
+ JTextArea x,y;  
+  ResizeDialogSubstitute uwudaddy;
+    ResizeDialog(int widthNow, int heightNow, ResizeDialogSubstitute UwuDaddy)
+    {
+        uwudaddy=UwuDaddy;
+        this.setSize(300, 200);
+        this.setTitle("Resize");
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        JLabel label1= new JLabel("Define new Imagesize");
+        this.add(label1,c);
+        JLabel label2= new JLabel("Width:");
+        this.add(label2,c);
+        x = new JTextArea(Integer.toString(widthNow));
+        this.add(x,c);
+        JLabel label3 = new JLabel("Height:");
+        this.add(label3,c);
+        y = new JTextArea(Integer.toString(heightNow));
+        this.add(y,c);
+        this.addWindowListener(new WindowAdapter() 
+        {
+          public void windowClosed(WindowEvent e)
+          {
+            System.out.println("At least I gotr so far");
+            //Tell Parent the result of the request, plz kill me
+            uwudaddy.SetHeight(Integer.parseInt(GetNewHeight()));
+            uwudaddy.SetWidth(Integer.parseInt(GetNewWidth()));
+            uwudaddy.stillrunning=false;
+          }
         
-        //MenuBar
-        bar = new JMenuBar();
-        this.setJMenuBar(bar);
-        
-        //Menus
-        file = new JMenu("File");
-        bar.add(file);
-        edit = new JMenu("Edit");
-        bar.add(edit);
-        //FileItems
-        save = new JMenuItem("Save");
-        save.addActionListener(this);
-        file.add(save);
-        exportdata = new JMenuItem("Export image data to file");
-        exportdata.addActionListener(this);
-        file.add(exportdata);
-        exportfunction = new JMenuItem("Export function");
-        exportfunction.addActionListener(this);
-        file.add(exportfunction);
-        //EditItems
-        bgcolor = new JMenuItem("Set basecolor");
-        bgcolor.addActionListener(this);
-        edit.add(bgcolor);
-        //Drawing Surface
-        canvas = new ImagePane();
-        canvas.setBorder(BorderFactory.createLineBorder(Color.black));
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 0.98;
-        c.weighty = 0.5;
-        c.gridwidth = 3;
-        c.gridx = 0;
-        c.gridy = 0;
-        this.add(canvas, c);
-        //ShadeSelector
-        shadeselector = new ShadeSelectPane(BaseColor);
-        shadeselector.setBorder(BorderFactory.createLineBorder(Color.red));
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 0.02;
-        c.weighty = 0.5;
-        c.gridwidth = 1;
-        c.gridx = 4;
-        c.gridy = 0;
-        this.add(shadeselector, c);
+          public void windowClosing(WindowEvent e)
+          {
+          }
+        });
 
     }
-    // main-Methode
-    public static void main(String[] args)
-    {                                                
-        Main frame = new Main();
-        frame.setVisible(true);   
-        
+    String GetNewWidth(){
+        return x.getText();
     }
-    public void actionPerformed (ActionEvent ae){
-        
-        if(ae.getSource() == this.bgcolor){
-            BaseColor = new CompressedColor(JColorChooser.showDialog(null, "Farbauswahl", null));
-            BaseColor.updateShades();
-            System.out.println(Integer.toHexString(BaseColor.rgb565));
-            shadeselector.repaint();
-        }
-        else if(ae.getSource() == this.save){
-            System.out.println("Save was pressed!");
-        }
-        else if(ae.getSource() == this.exportdata){
-            System.out.println("Export Data was pressed!");
-        }
-        else if(ae.getSource() == this.exportfunction){
-            System.out.println("Export Function was pressed");
-        }
-    }
-}
-class ImagePane extends JPanel {
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawString("BLAH", 20, 20);
-        g.drawRect(200, 200, 200, 200);
-    }
-}
-class ShadeSelectPane extends JPanel {
-    CompressedColor BaseColor;
-    ShadeSelectPane(CompressedColor baseColor){
-        super();
-        BaseColor = baseColor;
-    }
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        for (int i = 0; i < 8; i++) {
-            g.setColor(BaseColor.shades[i].color);
-           g.fillRect(0, i*(this.getHeight()/8), this.getWidth(), i*(this.getHeight()/8)+(this.getHeight()/8)); 
-        }
-
-        
-    }
-}
-//CompressedColor.java
-
-import java.awt.Color;
-
-public class CompressedColor {
-    Color color;
-    short rgb565;
-    CompressedColor[] shades;
-    void updateShades(){
-        for (int i = 0; i < shades.length; i++) {
-            shades[i]  = new CompressedColor(new Color((color.getRed()-(i<<3))&0xFF, (color.getGreen()-(i<<3))&0xff, (color.getBlue()-(i<<3))&0xff));
-        }
-    }
-    void setColor(Color clr){
-        color = clr;
-        rgb565=(short)((((clr.getRed() & 0b11111000) << 8) | ((clr.getGreen() & 0b11111100) << 3) | (clr.getBlue() >> 3))&0xFFFF);
-        
-    }
-    CompressedColor(short clr){
-        shades = new CompressedColor[8];
-        rgb565 = clr;
-        color= new Color((clr>>8)&0xF8, (clr>>3)&0xFC, (clr<<3)&0xF8);
-    }
-    CompressedColor(Color clr){
-        shades = new CompressedColor[8];
-        color = clr;
-        rgb565=(short)((((clr.getRed() & 0b11111000) << 8) | ((clr.getGreen() & 0b11111100) << 3) | (clr.getBlue() >> 3))&0xFFFF);
+    String GetNewHeight(){
+        return y.getText();
     }
 }
