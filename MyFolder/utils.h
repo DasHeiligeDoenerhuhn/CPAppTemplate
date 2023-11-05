@@ -1,0 +1,1 @@
+char random(char start, char max); //Mockup for now
